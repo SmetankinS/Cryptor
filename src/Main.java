@@ -1,25 +1,18 @@
 import java.util.Scanner;
+import java.util.function.Function;
 
 public class Main {
     public static void main(String[] args) {
-        String action;
-        System.out.println("Выберите действие (encrypt/decrypt)");
+        boolean manual = args.length == 0;
         Scanner scanner = new Scanner(System.in);
-        action = scanner.next();
-        if(action.equals("encrypt")) {
-            int key = 1;
-            System.out.println("Введите текст");
-            String str = scanner.next();
-            Cryptor cryptor = CryptorFactory.getCryptor("default");
-            System.out.println(cryptor.encrypt(str, key));
-        } else if(action.equals("decrypt")) {
-            int key = 1;
-            System.out.println("Введите текст");
-            String str = scanner.next();
-            Cryptor cryptor = CryptorFactory.getCryptor("default");
-            System.out.println(cryptor.decrypt(str, key));
-        } else {
-            System.out.println("Некорректный ввод");
-        }
+        CommandLineInputs cli = manual ? new CommandLineInputs(scanner, System.out) : new CommandLineInputs(args);
+
+        if (manual) System.out.println("Введите текст");
+        Cryptor cryptor = CryptorFactory.getCryptor(cli.getAlgId(), cli.getKey());
+        Function<String, String> changeString = cli.getMode().getMethod(cryptor);
+
+        while (scanner.hasNext())
+            System.out.println(changeString.apply(scanner.nextLine()));
     }
+
 }
