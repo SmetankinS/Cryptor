@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.function.Function;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,10 +9,10 @@ public class Main {
 
         if (manual) System.out.println("Введите текст");
         Cryptor cryptor = CryptorFactory.getCryptor(cli.getAlgId(), cli.getKey());
-        String coded = cli.getMode().getMethod(cryptor)
-                .apply(scanner.next());
+        Function<String, String> changeString = cli.getMode().getMethod(cryptor);
 
-        System.out.println(coded);
+        while (scanner.hasNext())
+            System.out.println(changeString.apply(scanner.nextLine()));
     }
 
 }
